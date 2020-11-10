@@ -2,7 +2,7 @@ const express =require('express');
 const router = express.Router();
 const multer = require('multer');
 const checkAuth = require('../middleware/check-auth');
-const SubjectsController = require('../controllers/subjects');
+const StaffController = require('../controllers/staffs');
 
 
 const storage = multer.diskStorage({
@@ -32,14 +32,14 @@ const upload = multer({
 });
 
 
-router.get("/",SubjectsController.subjects_get_all);
+router.get("/",StaffController.staffs_get_all);
 
-router.post("/",checkAuth,upload.single('productImage'),SubjectsController.subjects_create_subject);
+router.post("/",checkAuth,upload.single('productImage'),StaffController.staffs_create_staff);
 
-router.get("/:subjectId",SubjectsController.subjects_get_subject);
+router.get("/:staffId",StaffController.staffs_get_staff);
 
-router.patch("/:subjectId",checkAuth,SubjectsController.subjects_updates_subject);
+router.patch("/:staffId",checkAuth,StaffController.staffs_updates_staff);
 
-router.delete("/:subjectId",checkAuth,SubjectsController.subjects_delete_subject);
+router.delete("/:staffId",checkAuth,StaffController.staffs_delete_staff);
 
 module.exports = router;

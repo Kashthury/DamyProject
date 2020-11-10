@@ -4,10 +4,14 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-
 const subjectRoutes=require('./api/routes/subjects');
 const teacherRoutes=require('./api/routes/teachers');
 const userRoutes = require('./api/routes/user');
+const staffRoutes=require('./api/routes/staffs');
+const studentRoutes= require('./api/routes/students');
+const paymentRoutes= require('./api/routes/payments');
+
+
 
 mongoose.connect('mongodb://127.0.0.1:27017/productdb',{ useNewUrlParser: true, useUnifiedTopology: true })
 .then(() => {
@@ -30,7 +34,7 @@ app.use((req, res, next)=>{
     res.header("Access-Contol-Allow-Header","Origin,X-Reqested-With,Content-Type,Accept,Authorization");
 
     if(req.method ==='OPTIONS'){
-        res.header("Access-Control-Allow-Method",'PUT,POST,PATCH<DELETE,GET');
+        res.header("Access-Control-Allow-Method",'PUT,POST,PATCH,DELETE,GET');
         res.status(200).json({});
 
     }
@@ -41,6 +45,9 @@ app.use((req, res, next)=>{
 app.use('/subjects',subjectRoutes);
 app.use('/teachers',teacherRoutes);
 app.use('/user',userRoutes);
+app.use('/staffs',staffRoutes);
+app.use('/students',studentRoutes);
+app.use('/payments',paymentRoutes);
 
 
 app.use((req, res, next) => {

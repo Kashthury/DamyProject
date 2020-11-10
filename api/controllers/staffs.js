@@ -1,23 +1,28 @@
 const mongoose=require('mongoose');
-const Subject = require("../models/subject");
+const Staff = require("../models/staff");
+
 const { success, error, validation } = require("../helpers/responseApi");
 
-exports.subjects_get_all = (req,res,next)=>{
-    Subject.find()
-    .select("name fee")
+exports.staffs_get_all = (req,res,next)=>{
+    Staff.find()
+    .select("name address gender salary position")
     .exec()
     .then(docs => {
         const response ={
-            count: docs.length,
-            subjects: docs.map(doc =>{
-                return{
-                    SubjectName: doc.name,
-                    Fee:doc.fee,
-                  
+             count: docs.length,
+             staff: docs.map(doc =>{
+                 return{
                     _id: doc._id,
-                    request: {
+                    StaffName: doc.name,
+                    Address:doc.address,
+                    Gender:doc.gender,
+                    TelephoneNo:doc.telephoneno,
+                    Salary:doc.salary,
+                    Position:doc.position,
+                   
+                     request: {
                         type: 'GET',
-                        url: 'http://localhost:3000/subjects/'+doc._id
+                        url: 'http://localhost:3000/staffs/'+doc._id
                     }
                 }
             })
@@ -30,30 +35,40 @@ exports.subjects_get_all = (req,res,next)=>{
 
 } 
 
-exports.subjects_create_subject = (req, res, next)=> {
-    const subject = new Subject({
-                   _id: new mongoose.Types.ObjectId(),
-                    name: req.body.name,
-                    fee:req.body.fee,     
+exports.staffs_create_staff = (req, res, next)=> {
+    const staff = new Staff({
+            _id: new mongoose.Types.ObjectId(),
+            name: req.body.name,
+            address:req.body.address,
+            gender:req.body.gender,
+            telephoneno:req.body.telephoneno,
+            salary:req.body.salary,
+            position:req.body.position 
            
     });
-    subject
+    staff
     .save()
     .then(result => {
-      
+       
         const response = {
-             message: "Created subject successfully",
-             createdSubject: {
+             message: "Created staff successfully",
+             createdStaff: {
              name: result.name,
-             fee:result.fee,
+             address:result.address,
+             gender:result.gender,
+             telephoneno:result.telephoneno,
+             salary:result.salary,
+             position:result.position,
                    
+            //price: result.price,
+            //_id: result._id,
              request: {
                 type:'GET',
-                url: "http://localhost:3000/subjects"+ result._id
+                url: "http://localhost:3000/staffs"+ result._id
                }
             }
           };
-       
+        //});
         res.status(200).json(success("OK",response,res.statusCode));
     })
     .catch((error) => {
@@ -61,27 +76,27 @@ exports.subjects_create_subject = (req, res, next)=> {
       });
 };
 
-exports.subjects_get_subject = (req, res, next)=> {
-    const id= req.params.subjectId;
-    Subject.findById(id)
-    .select('name fee')
+exports.staffs_get_staff = (req, res, next)=> {
+    const id= req.params.staffId;
+    Staff.findById(id)
+    .select('name')
     .exec()
     .then(doc => {
         console.log("From database",doc);
         if(doc){
             
              const response ={   
-                 subject: doc,
+                 staff: doc,
                  requsest: {
                     type: 'GET',
-                    url: 'http://localhost:3000/subjects'
+                    url: 'http://localhost:3000/staffs'
                 }
             };
          res.status(200).json(success("OK",response,res.statusCode));
-          
+           
         }else{
            
-           res.status(404).json(error("Subject Not found", res.statusCode));
+           res.status(404).json(error("Staff Not found", res.statusCode));
 
         }
         
@@ -93,26 +108,26 @@ exports.subjects_get_subject = (req, res, next)=> {
 
 }
 
-exports.subjects_updates_subject = (req, res, next)=>{
-    const id = req.params.subjectId;
+exports.staffs_updates_staff = (req, res, next)=>{
+    const id = req.params.staffId;
     const updateOps = {};
     for(const ops of req.body){
         updateOps[ops.propName]=ops.value;
 
     }
-    Subject.update({_id: id},{$set: updateOps})
+    Staff.update({_id: id},{$set: updateOps})
     .exec()
     .then(result => {
-       
+       // res.status(200).json({
         const response = {
-            message:'Subject updated',
+            message:'Staff updated',
             request: {
                 type: 'GET',
-                url: 'http://localhost:3000/subjects/'+ id
+                url: 'http://localhost:3000/staffs/'+ id
             }
         }
         res.status(200).json(success("OK",response,res.statusCode));  
-      
+       // });
 
     })
     .catch((error) => {
@@ -121,23 +136,23 @@ exports.subjects_updates_subject = (req, res, next)=>{
 
 };
 
-exports.subjects_delete_subject = (req, res, next)=>{
-    const id =req.params.subjectId;
-    Subject.remove({_id: id})
+exports.staffs_delete_staff = (req, res, next)=>{
+    const id =req.params.staffId;
+    Staff.remove({_id: id})
     .exec()
     .then(result => {
-       
+       // res.status(200).json({
         const response = {
-            message:'Subject Deleted',
+            message:'Staff Deleted',
             request: {
              type: 'POST',
-            url: 'http://localhost:3000/subject',
+            url: 'http://localhost:3000/staffs',
             body: { name:'String'}
  
             }
         }
         res.status(200).json(success("OK",response,res.statusCode));  
-       
+       // });
     })
     .catch((error) => {
         res.status(500).json(error("Something went wrong", res.statusCode));
